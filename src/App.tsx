@@ -1,35 +1,88 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+
+import { v4 as uuidv4 } from "uuid";
+
+import "./App.css";
+import TodoItem from "./components/TodoItem";
+
+type TodoData = {
+  id: string;
+  title: string;
+  description: string;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState<TodoData[]>([
+    {
+      id: uuidv4(),
+      title: "todo 1",
+      description: "description 1",
+    },
+    {
+      id: uuidv4(),
+      title: "todo 2",
+      description: "description 2",
+    },
+  ]);
+  const [todoTitle, setTodoTitle] = useState("");
+  const [todoDescription, setTodoDescription] = useState("");
+
+  const addTodo = () => {
+    if (todoTitle === "") {
+      alert("Please enter a title for your todo.");
+      return;
+    }
+    if (todoDescription === "") {
+      alert("Please enter a description for your todo.");
+      return;
+    }
+    setTodos([
+      ...todos,
+      { id: uuidv4(), title: todoTitle, description: todoDescription },
+    ]);
+    setTodoTitle("");
+    setTodoDescription("");
+  };
+
+  const deleteTodo = (id: string) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <h1>todo list</h1>
+      <div id="todo-input-container">
+        <input
+          type="text"
+          id="todo-input"
+          placeholder="new todo"
+          tabIndex={1}
+          value={todoTitle}
+          onChange={(e) => setTodoTitle(e.target.value)}
+        />
+        <button id="todo-add" tabIndex={3} onClick={addTodo}>
+          add
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <textarea
+        id="todo-description-input"
+        placeholder="description"
+        tabIndex={2}
+        value={todoDescription}
+        onChange={(e) => setTodoDescription(e.target.value)}
+      ></textarea>
+      <section id="todos">
+        {todos.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            title={todo.title}
+            description={todo.description}
+            onDelete={() => deleteTodo(todo.id)}
+          />
+        ))}
+      </section>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
