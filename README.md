@@ -11,7 +11,7 @@ yarn install
 2. Run the app
 
 ```bash
-yarn start
+yarn dev
 ```
 
 3. Open the app
